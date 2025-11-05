@@ -1,27 +1,20 @@
 import { useState } from 'react';
 import { FolderPlus } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { storage } from '../lib/storage';
 
 export default function CreateFolder() {
   const [folderName, setFolderName] = useState('');
   const [createdId, setCreatedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!folderName.trim()) return;
 
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('folders')
-        .insert([{ name: folderName }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setCreatedId(data.id);
+      const folder = storage.createFolder(folderName);
+      setCreatedId(folder.id);
       setFolderName('');
     } catch (error) {
       console.error('Error creating folder:', error);

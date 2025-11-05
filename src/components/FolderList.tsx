@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Folder, ChevronDown, ChevronRight, FileText, Download, Edit2, X, Check } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { storage } from '../lib/storage';
 
 interface File {
   id: string;
@@ -26,31 +26,10 @@ export default function FolderList() {
     fetchFolders();
   }, []);
 
-  const fetchFolders = async () => {
+  const fetchFolders = () => {
     try {
-      const { data: foldersData, error: foldersError } = await supabase
-        .from('folders')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (foldersError) throw foldersError;
-
-      const foldersWithFiles = await Promise.all(
-        (foldersData || []).map(async (folder) => {
-          const { data: filesData } = await supabase
-            .from('files')
-            .select('*')
-            .eq('folder_id', folder.id)
-            .order('created_at', { ascending: false });
-
-          return {
-            ...folder,
-            files: filesData || [],
-          };
-        })
-      );
-
-      setFolders(foldersWithFiles);
+      const foldersData = storage.getFolders();
+      setFolders(foldersData);
     } catch (error) {
       console.error('Error fetching folders:', error);
     } finally {
@@ -89,20 +68,14 @@ export default function FolderList() {
     setRenameValue('');
   };
 
-  const saveRename = async (folderId: string) => {
+  const saveRename = (folderId: string) => {
     if (!renameValue.trim()) {
       cancelRename();
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('folders')
-        .update({ name: renameValue })
-        .eq('id', folderId);
-
-      if (error) throw error;
-
+      storage.renameFolder(folderId, renameValue);
       setFolders((prev) =>
         prev.map((folder) =>
           folder.id === folderId ? { ...folder, name: renameValue } : folder
