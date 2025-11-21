@@ -1,36 +1,22 @@
-interface File {
-  id: string;
-  name: string;
-  url: string;
-  created_at: string;
-}
-
-interface Folder {
-  id: string;
-  name: string;
-  created_at: string;
-  files: File[];
-}
-
 const STORAGE_KEY = 'folders_data';
 
 function generateId() {
   return crypto.randomUUID();
 }
 
-function getFolders(): Folder[] {
+function getFolders() {
   const data = localStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : [];
 }
 
-function saveFolders(folders: Folder[]) {
+function saveFolders(folders) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(folders));
 }
 
 export const storage = {
-  createFolder: (name: string) => {
+  createFolder: (name) => {
     const folders = getFolders();
-    const newFolder: Folder = {
+    const newFolder = {
       id: generateId(),
       name,
       created_at: new Date().toISOString(),
@@ -47,7 +33,7 @@ export const storage = {
     );
   },
 
-  renameFolder: (id: string, newName: string) => {
+  renameFolder: (id, newName) => {
     const folders = getFolders();
     const folder = folders.find((f) => f.id === id);
     if (folder) {
@@ -58,17 +44,17 @@ export const storage = {
     return null;
   },
 
-  deleteFolder: (id: string) => {
+  deleteFolder: (id) => {
     const folders = getFolders();
     const filtered = folders.filter((f) => f.id !== id);
     saveFolders(filtered);
   },
 
-  addFile: (folderId: string, fileName: string, fileUrl: string) => {
+  addFile: (folderId, fileName, fileUrl) => {
     const folders = getFolders();
     const folder = folders.find((f) => f.id === folderId);
     if (folder) {
-      const newFile: File = {
+      const newFile = {
         id: generateId(),
         name: fileName,
         url: fileUrl,
@@ -81,7 +67,7 @@ export const storage = {
     return null;
   },
 
-  deleteFile: (folderId: string, fileId: string) => {
+  deleteFile: (folderId, fileId) => {
     const folders = getFolders();
     const folder = folders.find((f) => f.id === folderId);
     if (folder) {

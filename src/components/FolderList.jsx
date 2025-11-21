@@ -2,24 +2,11 @@ import { useState, useEffect } from 'react';
 import { Folder, ChevronDown, ChevronRight, FileText, Download, Edit2, X, Check } from 'lucide-react';
 import { storage } from '../lib/storage';
 
-interface File {
-  id: string;
-  name: string;
-  url: string;
-}
-
-interface FolderWithFiles {
-  id: string;
-  name: string;
-  created_at: string;
-  files: File[];
-}
-
 export default function FolderList() {
-  const [folders, setFolders] = useState<FolderWithFiles[]>([]);
-  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [folders, setFolders] = useState([]);
+  const [expandedFolders, setExpandedFolders] = useState(new Set());
   const [loading, setLoading] = useState(true);
-  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renamingId, setRenamingId] = useState(null);
   const [renameValue, setRenameValue] = useState('');
 
   useEffect(() => {
@@ -37,7 +24,7 @@ export default function FolderList() {
     }
   };
 
-  const toggleFolder = (folderId: string) => {
+  const toggleFolder = (folderId) => {
     setExpandedFolders((prev) => {
       const next = new Set(prev);
       if (next.has(folderId)) {
@@ -49,7 +36,7 @@ export default function FolderList() {
     });
   };
 
-  const handleDownload = (file: File) => {
+  const handleDownload = (file) => {
     const link = document.createElement('a');
     link.href = file.url;
     link.download = file.name;
@@ -58,7 +45,7 @@ export default function FolderList() {
     document.body.removeChild(link);
   };
 
-  const startRename = (folder: FolderWithFiles) => {
+  const startRename = (folder) => {
     setRenamingId(folder.id);
     setRenameValue(folder.name);
   };
@@ -68,7 +55,7 @@ export default function FolderList() {
     setRenameValue('');
   };
 
-  const saveRename = (folderId: string) => {
+  const saveRename = (folderId) => {
     if (!renameValue.trim()) {
       cancelRename();
       return;

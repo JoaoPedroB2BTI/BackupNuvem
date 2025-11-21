@@ -3,10 +3,8 @@ import { FolderPlus, FolderOpen } from 'lucide-react';
 import CreateFolder from './components/CreateFolder';
 import FolderList from './components/FolderList';
 
-type Tab = 'create' | 'view';
-
 function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('create');
+  const [activeTab, setActiveTab] = useState('create');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-900 to-blue-900">

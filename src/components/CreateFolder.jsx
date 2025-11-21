@@ -4,10 +4,10 @@ import { storage } from '../lib/storage';
 
 export default function CreateFolder() {
   const [folderName, setFolderName] = useState('');
-  const [createdId, setCreatedId] = useState<string | null>(null);
+  const [createdId, setCreatedId] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!folderName.trim()) return;
 
